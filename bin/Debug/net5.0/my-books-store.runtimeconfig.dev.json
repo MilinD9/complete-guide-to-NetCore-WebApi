@@ -1,0 +1,9 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\MILIND\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\MILIND\\.nuget\\packages",
+      "D:\\Visual Studio\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+    ]
+  }
+}

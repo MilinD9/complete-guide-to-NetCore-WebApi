@@ -7,18 +7,24 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using my_books_store.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using my_books_store.Data.Services;
 
 namespace my_books_store
 {
     public class Startup
     {
+        public string ConnectionString { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            ConnectionString = configuration.GetConnectionString("MyDBConnection");
+
         }
 
         public IConfiguration Configuration { get; }
@@ -28,6 +34,14 @@ namespace my_books_store
         {
 
             services.AddControllers();
+            //Configuarion DJ connection DBcontext with SQL --**Milind
+            services.AddDbContext<appDbContext>(options => options.UseSqlServer(ConnectionString));
+
+            //Configure DJ new Book Service --AddTransient: A new instance of the service is created each time it is requested. This is ideal for lightweight, stateless services.
+            services.AddTransient<BookService>();
+            services.AddTransient<AuthorsService>();
+            services.AddTransient<PublishersService>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "my_books_store", Version = "v1" });
@@ -54,6 +68,9 @@ namespace my_books_store
             {
                 endpoints.MapControllers();
             });
+
+            //Configure DJ service DbInitializer Class
+            AppDbInitializer.Seed(app);
         }
     }
 }
