@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using my_books_store.Data.Services;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace my_books_store
 {
@@ -34,13 +35,27 @@ namespace my_books_store
         {
 
             services.AddControllers();
-            //Configuarion DJ connection DBcontext with SQL --**Milind
+            //Configuarion DependencyInjection connection DBcontext with SQL --**Milind
             services.AddDbContext<appDbContext>(options => options.UseSqlServer(ConnectionString));
 
             //Configure DJ new Book Service --AddTransient: A new instance of the service is created each time it is requested. This is ideal for lightweight, stateless services.
             services.AddTransient<BookService>();
             services.AddTransient<AuthorsService>();
             services.AddTransient<PublishersService>();
+
+            //*api versioning
+            //services.AddApiVersioning(); for not set this default specified just DependencyInjection for versioninh
+            //configuring default
+            services.AddApiVersioning(config=>
+            {
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                config.AssumeDefaultVersionWhenUnspecified = true;
+
+                //config.ApiVersionReader = new HeaderApiVersionReader("custom-version-header");//for HTTP based 
+                //config.ApiVersionReader = new MediaTypeApiVersionReader();// HTTP Media Type-Based  
+
+            });
+
 
             services.AddSwaggerGen(c =>
             {
@@ -69,7 +84,7 @@ namespace my_books_store
                 endpoints.MapControllers();
             });
 
-            //Configure DJ service DbInitializer Class
+            //Configure DependencyInjection service DbInitializer Class
             AppDbInitializer.Seed(app);
         }
     }
